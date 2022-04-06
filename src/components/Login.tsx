@@ -25,22 +25,46 @@ export class Login extends React.Component<LoginProps, LoginState> {
 
   private setUserName(event: CustomEvent) {
     this.setState({ userName: event.target.value });
-    console.log("setting username to: " + event.target.value);
+    // console.log("setting username to: " + event.target.value);
   }
 
   private setPassword(event: CustomEvent) {
     this.setState({ password: event.target.value });
   }
-    
-    private async handleSubmit(event: SyntheticEvent) {
-        event.preventDefault();
+  // we try to assess a service with this method, so we make it asynchronous
+  // we also need to control everything that happens to the component, so we use the prevent.Default()
+  // try to get the result from the authentication service
+  private async handleSubmit(event: SyntheticEvent) {
+    event.preventDefault();
+    // once the handleSubmit is activated, then we have an Attempted Login turn to true
+    const result = await this.props.authService.login(
+      this.state.userName,
+      this.state.password
+    );
+    // if you have a result, the login has been succesful, if not the login has been unsuccesful
+    if (result) {
+      this.setState({ loginSuccesful: true });
+    } else {
+      this.setState({ loginSuccesful: false });
+    }
+  }
+// if the login has been attempted, and login has been succesful,
+    // display message inside of label with "login succesful", if not,
+    // display message of "login failed"
+  render() {
+    let loginMessage: any;
+    if (this.state.loginAttempted) {
+      if (this.state.loginSuccesful) {
+        loginMessage = <label>Login Succesful</label>;
+      } else {
+        loginMessage = <label>Login Failed</label>;
+      }
     }
 
-  render() {
     return (
       <div>
         <h2> Please login</h2>
-        <form>
+        <form onSubmit={(event) => this.handleSubmit(event)}>
           <input
             value={this.state.userName}
             onChange={(event) => this.setUserName(event)}
@@ -54,6 +78,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
           <br />
           <input type="submit" value="login" />
         </form>
+        {loginMessage}
       </div>
     );
   }
