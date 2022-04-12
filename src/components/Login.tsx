@@ -1,8 +1,12 @@
 import React, { SyntheticEvent } from "react";
+import { User } from "../model/Model";
 import { AuthService } from "../services/AuthService";
 
 interface LoginProps {
   authService: AuthService;
+  // Add new property to Login, function that has user of type user,
+  // return anything we just care about what is happening inside of it
+  setUser: (user: User) => void;
 }
 
 interface LoginState {
@@ -36,6 +40,8 @@ export class Login extends React.Component<LoginProps, LoginState> {
   // try to get the result from the authentication service
   private async handleSubmit(event: SyntheticEvent) {
     event.preventDefault();
+    // initialize state here
+    this.setState({ loginAttempted: true });
     // once the handleSubmit is activated, then we have an Attempted Login turn to true
     const result = await this.props.authService.login(
       this.state.userName,
@@ -44,13 +50,14 @@ export class Login extends React.Component<LoginProps, LoginState> {
     // if you have a result, the login has been succesful, if not the login has been unsuccesful
     if (result) {
       this.setState({ loginSuccesful: true });
+      this.props.setUser(result);
     } else {
       this.setState({ loginSuccesful: false });
     }
   }
-// if the login has been attempted, and login has been succesful,
-    // display message inside of label with "login succesful", if not,
-    // display message of "login failed"
+  // if the login has been attempted, and login has been succesful,
+  // display message inside of label with "login succesful", if not,
+  // display message of "login failed"
   render() {
     let loginMessage: any;
     if (this.state.loginAttempted) {
