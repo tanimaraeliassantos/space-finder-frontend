@@ -2,15 +2,24 @@ import React, { Component } from "react";
 import { User } from "../model/Model";
 import { Link } from "react-router-dom";
 
+
 export class Navbar extends Component<{
   user: User | undefined;
 }> {
   render() {
     let loginLogOut: any;
     if (this.props.user) {
-      loginLogOut = <Link to="logout">{this.props.user.userName}</Link>;
+      loginLogOut = (
+        <Link to="logout" style={{ float: "right" }}>
+          {this.props.user.userName}{" "}
+        </Link>
+      );
     } else {
-      loginLogOut = <Link to="login">Login</Link>;
+      loginLogOut = (
+        <Link to="login" style={{ float: "right" }}>
+          Login
+        </Link>
+      );
     }
     return (
       <div className="navbar">
